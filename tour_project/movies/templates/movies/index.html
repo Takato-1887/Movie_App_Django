@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Booking App</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="search-bar">
+            <input type="text" placeholder="Search movies..." id="search-input">
+            <button id="search-button">Search</button>
+        </div>
+        <nav class="genre-nav">
+            <a href="#" class="genre-link" data-genre="all">All</a>
+            <a href="#" class="genre-link" data-genre="action">Action</a>
+            <a href="#" class="genre-link" data-genre="comedy">Comedy</a>
+            <a href="#" class="genre-link" data-genre="drama">Drama</a>
+            <a href="#" class="genre-link" data-genre="horror">Horror</a>
+            <a href="#" class="genre-link" data-genre="sci-fi">Sci-Fi</a>
+        </nav>
+    </header>
+
+    <!-- Main Content Section -->
+    <main>
+        <div class="movie-grid">
+            {% for movie in movies %}
+            <div class="movie-card" data-genre="{{ movie.genre|default:'all' }}">
+                <img src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}" alt="{{ movie.title }}">
+                <h2>{{ movie.title }}</h2>
+                <p>{{ movie.overview|truncatechars:100 }}</p>
+                <p>Rating: {{ movie.vote_average }} ({{ movie.vote_count }} votes)</p>
+                <button class="book-button">Book Now</button>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="footer-content">
+            <img src="{% static 'images/logo.png' %}" alt="Trademark Logo" class="logo">
+            <p>&copy; 2023 Movie Booking App. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Search and Genre Filter -->
+    <script>
+        // Search functionality
+        document.getElementById('search-button').addEventListener('click', function () {
+            const query = document.getElementById('search-input').value;
+            window.location.href = `{% url 'search' %}?q=${query}`;
+        });
+
+        // Genre filter functionality
+        document.querySelectorAll('.genre-link').forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                const genre = this.getAttribute('data-genre');
+                const movieCards = document.querySelectorAll('.movie-card');
+
+                movieCards.forEach(card => {
+                    if (genre === 'all' || card.getAttribute('data-genre') === genre) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
